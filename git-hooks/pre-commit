@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Minimal pre-commit hook: run formatting/lint and secrets scan (if available).
+# Non-blocking in Sprint 1 (prints warnings); you can change to exit 1 to block later.
+
+echo "Running pre-commit checks..."
+
+# 1) Run black (if installed)
+if command -v black >/dev/null 2>&1; then
+  black --check .
+else
+  echo "black not installed; skipping formatting check."
+fi
+
+# 2) Run flake8 (if installed)
+if command -v flake8 >/dev/null 2>&1; then
+  flake8 || echo "flake8 reported issues. (This is a warning in Sprint 1)"
+else
+  echo "flake8 not installed; skipping lint check."
+fi
+
+# 3) Run gitleaks if present (secrets detection)
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks detect --source . || echo "gitleaks found potential secrets (warning in Sprint 1)."
+else
+  echo "gitleaks not installed; skipping secret scan."
+fi
+
+# End: allow commit to continue.
+exit 0
