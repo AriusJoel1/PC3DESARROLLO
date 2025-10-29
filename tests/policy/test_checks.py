@@ -40,6 +40,7 @@ def test_run_all_checks_on_text_simple(content, expect_findings):
     has_findings = len(findings) > 0
     assert has_findings == expect_findings
 
+
 def test_evaluate_files_io(tmp_path):
     # create temp file
     p = tmp_path / "tmp.tf"
@@ -47,6 +48,7 @@ def test_evaluate_files_io(tmp_path):
     res = checks.evaluate_files([str(p)])
     assert str(p) in res
     assert any(f.get("type") == "common_insecure_port" or f.get("type") == "insecure_bind" for f in res[str(p)])
+
 
 @pytest.mark.xfail(reason="policy: future check for header metadata required", strict=False)
 def test_future_policy():

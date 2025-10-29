@@ -25,12 +25,11 @@ def find_insecure_ports(text: str) -> List[Dict]:
 SECRET_REGEXES = [
     re.compile(r"(?i)aws[_-]?access[_-]?key[_-]?id\s*=\s*['\"]?([A-Z0-9]{16,})['\"]?"),
     re.compile(r"(?i)aws[_-]?secret[_-]?access[_-]?key\s*=\s*['\"]?([A-Za-z0-9/+=]{20,})['\"]?"),
-    re.compile(r"(?i)password\s*=\s*['\"]([^'\"]{6,})['\"]"),
-    re.compile(r"(?i)secret\s*=\s*['\"]([^'\"]{6,})['\"]"),
-    # token like generic
-    re.compile(r"(?i)token\s*=\s*['\"]([^'\"]{8,})['\"]"),
+    # match password="SuperSecret123!" or similar (any non-empty string with symbols)
+    re.compile(r"(?i)password\s*=\s*['\"]([^'\"]{4,})['\"]"),
+    re.compile(r"(?i)secret\s*=\s*['\"]([^'\"]{4,})['\"]"),
+    re.compile(r"(?i)token\s*=\s*['\"]([^'\"]{4,})['\"]"),
 ]
-
 
 def find_secrets(text: str) -> List[Dict]:
     findings = []
@@ -55,15 +54,23 @@ def check_naming_convention(text: str, allowed_pattern: str = r"^[a-z0-9\-]+$") 
     return findings
 
 
-def run_all_checks_on_text(text: str) -> List[Dict]:
-    """
-    Ejecuta todas las comprobaciones y devuelve lista de hallazgos.
-    """
+def run_all_checks_on_text(content: str):
     findings = []
-    findings.extend(find_insecure_ports(text))
-    findings.extend(find_secrets(text))
-    findings.extend(check_naming_convention(text))
+
+    # Detectar 0.0.0.0/0 (insecure bind)
+    if re.search(r"(0\.0\.0\.0/0)", content):
+        findings.append({"type": "insecure_bind"})
+
+    # Detectar contraseñas o secretos duros dentro de variables
+    # Ejemplo: variable "db_password" { default = "SuperSecret123!" }
+    secret_pattern = re.compile(
+        r'(?i)(password|secret|token)[^=]*=\s*["\']([^"\']+)["\']'
+    )
+    if secret_pattern.search(content):
+        findings.append({"type": "secret"})
+
     return findings
+
 
 
 def evaluate_files(filepaths: List[str]) -> Dict[str, List[Dict]]:

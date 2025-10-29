@@ -16,7 +16,7 @@ ci:
 	pytest --cov=policy --cov-report=term-missing
 
 check-policies:
-	python scripts/check_policies.py infra/terraform
+	PYTHONPATH=. python scripts/check_policies.py infra/terraform
 
 install-hooks:
 	@cp git-hooks/pre-commit .git/hooks/pre-commit && \
