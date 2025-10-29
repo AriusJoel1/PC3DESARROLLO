@@ -12,14 +12,8 @@ test:
 coverage:
 	pytest --maxfail=1 --quiet --cov=policy --cov-report=term-missing
 
-ci: coverage
-	@python - <<'PY'
-import sys
-import re
-# simple coverage gate: read .coverage? we rely on pytest-cov printed result above
-# In CI we trust pytest to return non-zero if coverage plugin configured to fail; alternatively configure coverage fail in workflow.
-print("CI target: run coverage and checks (see workflow for enforcement).")
-PY
+ci:
+	pytest --cov=policy --cov-report=term-missing
 
 check-policies:
 	python scripts/check_policies.py infra/terraform
