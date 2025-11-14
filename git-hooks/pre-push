@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# git-hooks/pre-push
+
+echo "Running pre-push quick checks..."
+
+# 1) Run policy python checks quickly
+PYTHONPATH=. python scripts/check_policies.py infra/terraform || echo "policy: findings detected (will block in CI if High)"
+
+# 2) terraform fmt check (only basic check)
+if command -v terraform >/dev/null 2>&1; then
+  (cd infra/terraform && terraform fmt -check) || { echo "terraform fmt failed"; exit 1; }
+else
+  echo "terraform not installed; skipping terraform fmt check"
+fi
+
+# If you want non-blocking, use exit 0; to block, use exit 1 on failures
+exit 0
