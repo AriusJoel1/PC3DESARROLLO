@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Validate Conventional Commit messages: type(scope?): subject
+# Validar mensajes de Conventional Commits
 MSG_FILE=$1
 MSG=$(cat "$MSG_FILE")
 

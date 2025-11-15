@@ -24,7 +24,7 @@ install-hooks:
 	chmod +x .git/hooks/pre-commit .git/hooks/commit-msg && \
 	echo "Hooks installed in .git/hooks/"
 
-# Makefile additions for Sprint 2
+# Sprint 2
 
 tflint:
 	@echo "Running tflint..."
