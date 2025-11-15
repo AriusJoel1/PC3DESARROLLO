@@ -4,7 +4,7 @@ from typing import List, Dict
 
 def find_insecure_ports(text: str) -> List[Dict]:
     """
-    Busca patrones de puertos inseguros en texto (ej: '0.0.0.0:22' o '22' en provider o resource).
+    Busca patrones de puertos inseguros en el texto (ej: '0.0.0.0:22' o '22' en provider o resource).
     Retorna lista de dicts con hallazgos.
     """
     findings = []
@@ -18,7 +18,7 @@ def find_insecure_ports(text: str) -> List[Dict]:
         r'(port|ingress)[\s=:\[]+["\']?(\d{1,5})["\']?', text, flags=re.IGNORECASE
     ):
         port = int(match.group(2))
-        if port in (22,):  # considered insecure for the policy
+        if port in (22,):  # considerado inseguro por la política
             findings.append(
                 {"type": "common_insecure_port", "port": port, "span": match.span()}
             )
@@ -31,7 +31,7 @@ SECRET_REGEXES = [
     re.compile(
         r"(?i)aws[_-]?secret[_-]?access[_-]?key\s*=\s*['\"]?([A-Za-z0-9/+=]{20,})['\"]?"
     ),
-    # match password="SuperSecret123!" or similar (any non-empty string with symbols)
+    # detectar password="SuperSecret123!" o similar (cualquier string no vacío con símbolos)
     re.compile(r"(?i)password\s*=\s*['\"]([^'\"]{4,})['\"]"),
     re.compile(r"(?i)secret\s*=\s*['\"]([^'\"]{4,})['\"]"),
     re.compile(r"(?i)token\s*=\s*['\"]([^'\"]{4,})['\"]"),
@@ -50,11 +50,12 @@ def check_naming_convention(
     text: str, allowed_pattern: str = r"^[a-z0-9\-]+$"
 ) -> List[Dict]:
     """
-    Busca nombres de recursos (heurística) y valida pattern simple: lowercase, digits and hyphens.
-    Retorna lista de violaciones.
+    Busca nombres de recursos (heurística) y valida un patrón simple:
+    minúsculas, dígitos y guiones.
+    Retorna una lista de violaciones.
     """
     findings = []
-    # heurística: resource "<type>" "<name>" { ... }
+    # Heurística: resource "<type>" "<name>" { ... }
     for m in re.finditer(r'resource\s+"[^"]+"\s+"([^"]+)"', text):
         name = m.group(1)
         if not re.match(allowed_pattern, name):
@@ -66,7 +67,7 @@ def check_naming_convention(
 def run_all_checks_on_text(content: str):
     findings = []
 
-    # Detectar 0.0.0.0/0 (insecure bind)
+    # Detectar 0.0.0.0/0 (exposición insegura)
     if re.search(r"(0\.0\.0\.0/0)", content):
         findings.append({"type": "insecure_bind"})
 
@@ -83,7 +84,8 @@ def run_all_checks_on_text(content: str):
 
 def evaluate_files(filepaths: List[str]) -> Dict[str, List[Dict]]:
     """
-    Dado un listado de archivos, ejecuta checks sobre cada uno y retorna dict filepath -> findings.
+    Dado un listado de archivos, ejecuta los checks sobre cada uno
+    y retorna un diccionario: filepath -> findings.
     """
     results = {}
     for p in filepaths:
@@ -91,7 +93,7 @@ def evaluate_files(filepaths: List[str]) -> Dict[str, List[Dict]]:
             with open(p, "r", encoding="utf-8") as fh:
                 content = fh.read()
         except Exception as e:
-            results[p] = [{"type": "error", "message": f"Could not read file: {e}"}]
+            results[p] = [{"type": "error", "message": f"No se pudo leer el archivo: {e}"}]
             continue
         results[p] = run_all_checks_on_text(content)
     return results

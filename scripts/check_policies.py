@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-"""
-scripts/check_policies.py
-Uso: python scripts/check_policies.py infra/terraform
-Salida: JSON simple con hallazgos por archivo (imprime en stdout)
-"""
-
 import sys
 import json
 from pathlib import Path
@@ -21,19 +14,20 @@ def discover_files(base: Path, ext=(".tf", ".yml", ".yaml", ".json")):
 
 def main(argv):
     if len(argv) < 2:
-        print("Usage: check_policies.py <path-to-scan>")
+        print("Uso: check_policies.py <ruta-a-escANear>")
         sys.exit(2)
     base = Path(argv[1])
     if not base.exists():
-        print(f"Path {base} not found")
+        print(f"La ruta {base} no existe")
         sys.exit(2)
     fps = discover_files(base)
     if not fps:
-        print("No files found to scan.")
+        print("No se encontraron archivos para escanear.")
         sys.exit(0)
     results = evaluate_files(fps)
     print(json.dumps(results, indent=2))
-    # exit with non-zero if any High severity finding: here consider 'secret' or insecure port as high
+    # salir con código distinto de cero si hay algún hallazgo de severidad Alta:
+    # se considera 'secret' o puerto inseguro como alta severidad
     high = False
     for fs in results.values():
         for f in fs:

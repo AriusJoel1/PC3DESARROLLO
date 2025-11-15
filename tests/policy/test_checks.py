@@ -45,7 +45,7 @@ def test_run_all_checks_on_text_simple(content, expect_findings):
 
 
 def test_evaluate_files_io(tmp_path):
-    # create temp file
+    # Crea un archivo temporal
     p = tmp_path / "tmp.tf"
     p.write_text(BAD_TF_PORT)
     res = checks.evaluate_files([str(p)])
@@ -57,8 +57,8 @@ def test_evaluate_files_io(tmp_path):
 
 
 @pytest.mark.xfail(
-    reason="policy: future check for header metadata required", strict=False
+    reason="policy: se requiere una verificación futura para los comentarios de las funciones", strict=False
 )
 def test_future_policy():
-    # Placeholder test for a policy planned in next sprint
+    # Placeholder test para una futura policy
     assert False
