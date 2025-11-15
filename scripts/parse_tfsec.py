@@ -4,6 +4,7 @@ import json
 import sys
 from pathlib import Path
 
+
 def main(report_path):
     p = Path(report_path)
     if not p.exists():
@@ -38,6 +39,7 @@ def main(report_path):
         sys.exit(1)
     else:
         sys.exit(0)
+
 
 if __name__ == "__main__":
     report = sys.argv[1] if len(sys.argv) > 1 else "reports/tfsec-report.json"

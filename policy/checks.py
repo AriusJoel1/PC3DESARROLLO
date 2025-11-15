@@ -1,5 +1,5 @@
 import re
-from typing import List, Tuple, Dict
+from typing import List, Dict
 
 
 def find_insecure_ports(text: str) -> List[Dict]:
@@ -30,6 +30,7 @@ SECRET_REGEXES = [
     re.compile(r"(?i)secret\s*=\s*['\"]([^'\"]{4,})['\"]"),
     re.compile(r"(?i)token\s*=\s*['\"]([^'\"]{4,})['\"]"),
 ]
+
 
 def find_secrets(text: str) -> List[Dict]:
     findings = []
@@ -70,7 +71,6 @@ def run_all_checks_on_text(content: str):
         findings.append({"type": "secret"})
 
     return findings
-
 
 
 def evaluate_files(filepaths: List[str]) -> Dict[str, List[Dict]]:

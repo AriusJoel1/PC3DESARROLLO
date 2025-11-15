@@ -1,6 +1,5 @@
 import pytest
 from policy import checks
-from unittest.mock import create_autospec, patch
 
 GOOD_TF = '''
 resource "aws_security_group" "good-ssh" {
@@ -29,6 +28,7 @@ variable "db_password" {
   default = "SuperSecret123!"
 }
 '''
+
 
 @pytest.mark.parametrize("content,expect_findings", [
     (GOOD_TF, False),

@@ -1,1 +1,1 @@
-__all__ = ["checks"]
+__all__ = ["checks"] # noqa

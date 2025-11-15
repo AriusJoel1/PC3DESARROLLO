@@ -6,10 +6,10 @@ Salida: JSON simple con hallazgos por archivo (imprime en stdout)
 """
 
 import sys
-import os
 import json
 from pathlib import Path
 from policy.checks import evaluate_files
+
 
 def discover_files(base: Path, ext=(".tf", ".yml", ".yaml", ".json")):
     files = []
@@ -17,6 +17,7 @@ def discover_files(base: Path, ext=(".tf", ".yml", ".yaml", ".json")):
         if p.is_file() and p.suffix in ext:
             files.append(str(p))
     return files
+
 
 def main(argv):
     if len(argv) < 2:
@@ -39,6 +40,7 @@ def main(argv):
             if f.get("type") in ("secret", "insecure_bind", "common_insecure_port"):
                 high = True
     sys.exit(1 if high else 0)
+
 
 if __name__ == "__main__":
     main(sys.argv)

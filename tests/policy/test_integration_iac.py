@@ -1,6 +1,4 @@
 # tests/policy/test_integration_iac.py
-import pytest
-from pathlib import Path
 from policy import checks
 
 SAMPLE_GOOD = """
@@ -28,6 +26,7 @@ variable "db_password" {
 }
 """
 
+
 def test_policy_detects_bad_and_good(tmp_path):
     # good -> no findings
     g = checks.run_all_checks_on_text(SAMPLE_GOOD)
@@ -35,4 +34,4 @@ def test_policy_detects_bad_and_good(tmp_path):
 
     # bad -> findings exist
     b = checks.run_all_checks_on_text(SAMPLE_BAD)
-    assert any(f["type"] in ("insecure_bind","common_insecure_port","secret","naming") for f in b)
+    assert any(f["type"] in ("insecure_bind", "common_insecure_port", "secret", "naming") for f in b)
