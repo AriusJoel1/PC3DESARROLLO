@@ -1,4 +1,3 @@
----
 name: Policy CI
 
 on:
@@ -31,19 +30,18 @@ jobs:
         run: pytest --maxfail=1 -q --cov=policy --cov-report=xml
 
       - name: Enforce coverage >= 85%
+        shell: python
         run: |
-          python - <<'PY'
-import xml.etree.ElementTree as ET
-tree = ET.parse('coverage.xml')
-root = tree.getroot()
-cov = float(root.get('line-rate')) * 100
-print(f"Coverage: {cov:.2f}%")
-if cov < 85.0:
-    print(" Coverage below 85% -> failing CI")
-    raise SystemExit(1)
-else:
-    print(" Coverage OK")
-PY
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('coverage.xml')
+          root = tree.getroot()
+          cov = float(root.get('line-rate')) * 100
+          print(f"Coverage: {cov:.2f}%")
+          if cov < 85.0:
+              print(" Coverage below 85% -> failing CI")
+              raise SystemExit(1)
+          else:
+              print(" Coverage OK")
 
   iac-scan:
     needs: test-and-policy
@@ -73,10 +71,10 @@ PY
           terraform fmt -check
 
       - name: Run tflint
+        continue-on-error: true
         run: |
           cd infra/terraform
-          tflint --format=json > ../../reports/tflint-report.json || true
-        continue-on-error: true
+          tflint --format=json > ../../reports/tflint-report.json
 
       - name: Run tfsec and collect JSON
         run: |
@@ -86,4 +84,3 @@ PY
       - name: Parse tfsec and fail on HIGH
         run: |
           python scripts/parse_tfsec.py reports/tfsec-report.json
-        # If parse_tfsec returns 2 -> HIGH findings -> fail the job
