@@ -29,7 +29,7 @@ jobs:
       - name: Run tests with coverage
         run: PYTHONPATH=. pytest --maxfail=1 -q --cov=policy --cov-report=xml
 
-      - name: Enforce coverage >= 85%
+      - name: Enforce coverage >= 45%
         shell: python
         run: |
           import xml.etree.ElementTree as ET
@@ -38,7 +38,7 @@ jobs:
           cov = float(root.get('line-rate')) * 100
           print(f"Coverage: {cov:.2f}%")
           if cov < 45.0:
-              print(" Coverage below 85% -> failing CI")
+              print(" Coverage below 45% -> failing CI")
               raise SystemExit(1)
           else:
               print(" Coverage OK")
