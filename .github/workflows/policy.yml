@@ -27,7 +27,7 @@ jobs:
         run: flake8
 
       - name: Run tests with coverage
-        run: pytest --maxfail=1 -q --cov=policy --cov-report=xml
+        run: PYTHONPATH=. pytest --maxfail=1 -q --cov=policy --cov-report=xml
 
       - name: Enforce coverage >= 85%
         shell: python

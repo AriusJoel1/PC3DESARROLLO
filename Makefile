@@ -7,13 +7,13 @@ lint:
 	flake8 || true
 
 test:
-	pytest --maxfail=1 -q
+	PYTHONPATH=. pytest --maxfail=1 -q
 
 coverage:
-	pytest --maxfail=1 --quiet --cov=policy --cov-report=term-missing
+	PYTHONPATH=. pytest --maxfail=1 --quiet --cov=policy --cov-report=term-missing
 
 ci:
-	pytest --cov=policy --cov-report=term-missing
+	PYTHONPATH=. pytest --cov=policy --cov-report=term-missing
 
 check-policies:
 	PYTHONPATH=. python scripts/check_policies.py infra/terraform
