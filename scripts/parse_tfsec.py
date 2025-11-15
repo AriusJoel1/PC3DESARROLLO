@@ -31,7 +31,9 @@ def main(report_path):
     if high:
         print("\nHigh findings (sample):")
         for f in high[:10]:
-            print(f"- {f.get('rule_id') or f.get('id')} : {f.get('description') or f.get('message')}")
+            print(
+                f"- {f.get('rule_id') or f.get('id')} : {f.get('description') or f.get('message')}"
+            )
     # exit 2 if high, 1 if medium, 0 otherwise
     if len(high) > 0:
         sys.exit(2)

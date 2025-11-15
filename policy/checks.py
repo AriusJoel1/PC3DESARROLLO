@@ -14,17 +14,23 @@ def find_insecure_ports(text: str) -> List[Dict]:
         findings.append({"type": "insecure_bind", "port": port, "span": match.span()})
 
     # patrón HCL típico: "22" en parametro que contenga "port" o "ingress"
-    for match in re.finditer(r'(port|ingress)[\s=:\[]+["\']?(\d{1,5})["\']?', text, flags=re.IGNORECASE):
+    for match in re.finditer(
+        r'(port|ingress)[\s=:\[]+["\']?(\d{1,5})["\']?', text, flags=re.IGNORECASE
+    ):
         port = int(match.group(2))
         if port in (22,):  # considered insecure for the policy
-            findings.append({"type": "common_insecure_port", "port": port, "span": match.span()})
+            findings.append(
+                {"type": "common_insecure_port", "port": port, "span": match.span()}
+            )
 
     return findings
 
 
 SECRET_REGEXES = [
     re.compile(r"(?i)aws[_-]?access[_-]?key[_-]?id\s*=\s*['\"]?([A-Z0-9]{16,})['\"]?"),
-    re.compile(r"(?i)aws[_-]?secret[_-]?access[_-]?key\s*=\s*['\"]?([A-Za-z0-9/+=]{20,})['\"]?"),
+    re.compile(
+        r"(?i)aws[_-]?secret[_-]?access[_-]?key\s*=\s*['\"]?([A-Za-z0-9/+=]{20,})['\"]?"
+    ),
     # match password="SuperSecret123!" or similar (any non-empty string with symbols)
     re.compile(r"(?i)password\s*=\s*['\"]([^'\"]{4,})['\"]"),
     re.compile(r"(?i)secret\s*=\s*['\"]([^'\"]{4,})['\"]"),
@@ -40,7 +46,9 @@ def find_secrets(text: str) -> List[Dict]:
     return findings
 
 
-def check_naming_convention(text: str, allowed_pattern: str = r"^[a-z0-9\-]+$") -> List[Dict]:
+def check_naming_convention(
+    text: str, allowed_pattern: str = r"^[a-z0-9\-]+$"
+) -> List[Dict]:
     """
     Busca nombres de recursos (heurística) y valida pattern simple: lowercase, digits and hyphens.
     Retorna lista de violaciones.
