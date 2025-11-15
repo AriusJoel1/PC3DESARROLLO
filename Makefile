@@ -1,7 +1,7 @@
 .PHONY: help lint test ci check-policies install-hooks
 
 help:
-	@echo "Targets: lint test ci check-policies install-hooks"
+	@echo "Tareas disponibles: lint, test, ci, check-policies, install-hooks"
 
 lint:
 	flake8 || true
@@ -22,25 +22,24 @@ install-hooks:
 	@cp git-hooks/pre-commit .git/hooks/pre-commit && \
 	cp git-hooks/commit-msg .git/hooks/commit-msg && \
 	chmod +x .git/hooks/pre-commit .git/hooks/commit-msg && \
-	echo "Hooks installed in .git/hooks/"
+	echo "Hooks instalados en .git/hooks/"
 
 # Sprint 2
 
 tflint:
-	@echo "Running tflint..."
+	@echo "Ejecutando tflint..."
 	@cd infra/terraform && tflint || true
 
 tfsec:
-	@echo "Running tfsec..."
+	@echo "Ejecutando tfsec..."
 	@cd infra/terraform && tfsec --format json --out ../../reports/tfsec-report.json || true
 
 policy-scan:
-	@echo "Running policy scanner..."
+	@echo "Ejecutando análisis de políticas..."
 	PYTHONPATH=. python scripts/check_policies.py infra/terraform || true
-	@echo "Running tfsec parser..."
-	python scripts/parse_tfsec.py reports/tfsec-report.json || (echo "TFSEC found HIGH findings" && exit 2) || true
+	@echo "Procesando resultados de tfsec..."
+	python scripts/parse_tfsec.py reports/tfsec-report.json || (echo "TFSEC encontró hallazgos de severidad ALTA" && exit 2) || true
 
 install-tools:
-	@echo "Install local tools: terraform/tflint/tfsec if available (manual step)"
-	@echo "See README for platform-specific commands"
-
+	@echo "Instalación local de herramientas: terraform / tflint / tfsec (proceso manual)"
+	@echo "Consulta el README para los pasos específicos según tu sistema"
