@@ -71,7 +71,7 @@ jobs:
           terraform fmt -check
 
       - name: Run tflint
-        continue-on-error: true
+        continue-on-error: false
         run: |
           cd infra/terraform
           tflint --format=json > ../../reports/tflint-report.json
