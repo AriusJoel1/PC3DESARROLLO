@@ -13,15 +13,15 @@ provider "aws" {
 }
 
 module "example" {
-  source = "./modules/example_module"
+  source         = "./modules/example_module"
   instance_count = 1
 }
 
 resource "aws_security_group" "allow_ssh_bad" {
   name = "bad-ssh"
   ingress {
-    from_port = 22
-    to_port   = 22
+    from_port   = 22
+    to_port     = 22
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
